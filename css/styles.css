@@ -1,0 +1,705 @@
+/* =====================================================================
+   Tembea — Phase 2 stylesheet
+   Mobile-first. Exactly three media queries in the whole file:
+     1. min-width: 768px   (navigation + layout step-up)
+     2. min-width: 1024px  (featured destination 2x2 span)
+     3. prefers-reduced-motion: reduce
+   Everything else is carried by clamp(), auto-fit grids and wrapping flex.
+   ===================================================================== */
+
+
+/* ---------------------------------------------------------------------
+   1. Design tokens
+   Every text/background pair below has been checked at >= 4.5:1.
+   --------------------------------------------------------------------- */
+:root {
+  /* colour */
+  --brand: #0f6e66;
+  --brand-dark: #0a534d;
+  --ink: #14202b;
+  --ink-soft: #4a5b6b;
+  --surface: #ffffff;
+  --surface-alt: #f3f7f6;
+  --line: #d7e2df;
+  --focus: #a8480a;
+
+  --ok-bg: #e3f4f0;
+  --ok-ink: #0a534d;
+  --sold-bg: #fdece6;
+  --sold-ink: #8a2b12;
+
+  /* type */
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --text-body: 1rem;
+  --text-h1: clamp(2.125rem, 1.4rem + 3.2vw, 3.5rem);
+  --text-h2: 1.75rem;
+  --text-h3: 1.25rem;
+  --text-small: 0.875rem;
+  --leading: 1.6;
+
+  /* space */
+  --space-section: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+  --space-xs: 0.375rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+
+  /* shape */
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(20, 32, 43, 0.06),
+            0 8px 24px rgba(20, 32, 43, 0.08);
+  --shadow-lift: 0 2px 4px rgba(20, 32, 43, 0.08),
+                 0 16px 32px rgba(20, 32, 43, 0.14);
+  --transition: 180ms ease;
+}
+
+
+/* ---------------------------------------------------------------------
+   2. Reset
+   --------------------------------------------------------------------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body, h1, h2, h3, h4, p, figure, blockquote, dl, dd, ul, ol {
+  margin: 0;
+}
+
+ul[class], ol[class] {
+  padding: 0;
+  list-style: none;
+}
+
+img, picture, svg, video {
+  display: block;
+  max-width: 100%;
+}
+
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+
+/* ---------------------------------------------------------------------
+   3. Page shell — sticky footer
+   --------------------------------------------------------------------- */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading);
+  color: var(--ink);
+  background: var(--surface);
+}
+
+main { flex: 1; }
+
+.container {
+  width: min(1100px, 100% - 2rem);
+  margin-inline: auto;
+}
+
+.section { padding-block: var(--space-section); }
+
+
+/* ---------------------------------------------------------------------
+   4. Typography
+   --------------------------------------------------------------------- */
+h1, h2, h3 {
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-h1); }
+h2 { font-size: var(--text-h2); }
+h3 { font-size: var(--text-h3); }
+
+p + p { margin-top: var(--space-md); }
+
+.lead {
+  font-size: 1.125rem;
+  color: var(--ink-soft);
+  max-width: 60ch;
+}
+
+.prose { max-width: 65ch; }
+.prose > * + * { margin-top: var(--space-md); }
+
+a { color: var(--brand-dark); }
+a:hover { color: var(--brand); }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+
+/* ---------------------------------------------------------------------
+   5. Skip link
+   --------------------------------------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -150%);
+  z-index: 100;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--ink);
+  color: var(--surface);
+  border-radius: 0 0 var(--radius) var(--radius);
+  text-decoration: none;
+  transition: transform var(--transition);
+}
+
+.skip-link:focus { transform: translate(-50%, 0); color: var(--surface); }
+
+
+/* ---------------------------------------------------------------------
+   6. Header and navigation
+   --------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.site-header__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-block: var(--space-sm);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  padding: var(--space-xs);
+}
+
+.brand:hover { color: var(--brand); }
+
+/* The toggle is hidden until JavaScript announces itself in Phase 3.
+   Without JS the menu below stays visible, so the site still works. */
+.nav-toggle { display: none; }
+
+.js .nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.js .nav-toggle:hover { border-color: var(--brand); color: var(--brand); }
+
+.nav-toggle__icon {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  box-shadow: 0 -6px 0 currentColor, 0 6px 0 currentColor;
+}
+
+.site-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  margin: 0;
+}
+
+.js .site-menu { display: none; }
+.js .site-menu.is-open { display: flex; }
+
+.site-menu a {
+  display: block;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-radius: var(--radius);
+}
+
+.site-menu a:hover {
+  color: var(--brand-dark);
+  background: var(--surface-alt);
+}
+
+.site-menu a[aria-current="page"] {
+  color: var(--brand-dark);
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 var(--brand);
+}
+
+
+/* ---------------------------------------------------------------------
+   7. Buttons
+   --------------------------------------------------------------------- */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-lg);
+  background: var(--brand);
+  color: var(--surface);
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.button:hover {
+  background: var(--brand-dark);
+  color: var(--surface);
+  transform: translateY(-2px);
+}
+
+.button--ghost {
+  background: transparent;
+  color: var(--brand-dark);
+  border-color: var(--brand);
+}
+
+.button--ghost:hover { background: var(--ok-bg); color: var(--brand-dark); }
+
+.button[aria-disabled="true"],
+.button:disabled {
+  background: var(--line);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ---------------------------------------------------------------------
+   8. Hero
+   --------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: var(--space-section) 1rem;
+  overflow: hidden;
+  background: var(--ink);
+}
+
+.hero__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+}
+
+.hero__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 40ch;
+  text-align: center;
+  color: var(--surface);
+}
+
+.hero__content p { color: #eef4f3; }
+
+
+/* ---------------------------------------------------------------------
+   9. Card grids
+   auto-fit + minmax means no media query is needed for the columns.
+   --------------------------------------------------------------------- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  grid-auto-rows: 1fr;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-4px);
+}
+
+.card figure { margin: 0; }
+
+.card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: calc(var(--radius) - 4px);
+}
+
+.card figcaption,
+.card__meta {
+  font-size: var(--text-small);
+  color: var(--ink-soft);
+}
+
+.card p { margin: 0; }
+
+/* pins the link to the bottom so every card ends at the same line */
+.card > :last-child { margin-top: auto; }
+
+.destination-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  grid-auto-rows: minmax(200px, auto);
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+
+/* ---------------------------------------------------------------------
+   10. Badges and prices
+   --------------------------------------------------------------------- */
+.badge {
+  align-self: flex-start;
+  padding: 0.15rem 0.6rem;
+  font-size: var(--text-small);
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.badge--available { background: var(--ok-bg); color: var(--ok-ink); }
+.badge--sold { background: var(--sold-bg); color: var(--sold-ink); }
+
+.price { font-weight: 700; }
+.price__total { font-size: var(--text-small); color: var(--ink-soft); }
+
+
+/* ---------------------------------------------------------------------
+   11. Filters, search, results (markup lands in Phase 3)
+   --------------------------------------------------------------------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.filter {
+  min-height: 44px;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--surface);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.filter:hover { border-color: var(--brand); color: var(--brand-dark); }
+
+.filter[aria-pressed="true"],
+.filter.active {
+  background: var(--brand);
+  color: var(--surface);
+  border-color: var(--brand);
+  font-weight: 700;
+}
+
+.search { flex: 1 1 15rem; }
+
+.search label {
+  display: block;
+  font-size: var(--text-small);
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
+.result-count {
+  margin-top: var(--space-md);
+  color: var(--ink-soft);
+}
+
+.empty-state {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  text-align: center;
+  background: var(--surface-alt);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+}
+
+
+/* ---------------------------------------------------------------------
+   12. Tables
+   --------------------------------------------------------------------- */
+.table-wrap {
+  overflow-x: auto;
+  margin-top: var(--space-lg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+}
+
+caption {
+  padding: var(--space-md);
+  text-align: left;
+  color: var(--ink-soft);
+  font-size: var(--text-small);
+}
+
+th, td {
+  padding: var(--space-sm) var(--space-md);
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+thead th {
+  background: var(--ink);
+  color: var(--surface);
+  white-space: nowrap;
+}
+
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+tbody tr:last-child th,
+tbody tr:last-child td { border-bottom: 0; }
+
+
+/* ---------------------------------------------------------------------
+   13. Quote and FAQ
+   --------------------------------------------------------------------- */
+blockquote {
+  margin-block: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
+  border-left: 4px solid var(--brand);
+  background: var(--surface-alt);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 1.125rem;
+}
+
+blockquote footer {
+  margin-top: var(--space-sm);
+  font-size: var(--text-small);
+  color: var(--ink-soft);
+}
+
+details {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-top: var(--space-sm);
+  background: var(--surface);
+}
+
+summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+summary:hover { background: var(--surface-alt); color: var(--brand-dark); }
+details[open] summary { border-bottom: 1px solid var(--line); }
+details > p { padding: var(--space-md); }
+
+
+/* ---------------------------------------------------------------------
+   14. Forms
+   --------------------------------------------------------------------- */
+.form-card {
+  max-width: 40rem;
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.field { margin-bottom: var(--space-md); }
+
+.field label,
+.field legend {
+  display: block;
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.field textarea { min-height: 8rem; resize: vertical; }
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover { border-color: var(--brand); }
+
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"] { border-color: var(--sold-ink); }
+
+fieldset {
+  padding: var(--space-md);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+}
+
+.radio-row input { width: auto; min-height: auto; }
+.radio-row label { margin: 0; font-weight: 400; }
+
+.error {
+  min-height: 1.25rem;
+  margin-top: var(--space-xs);
+  font-size: var(--text-small);
+  color: var(--sold-ink);
+}
+
+.form-status {
+  margin-bottom: var(--space-md);
+  color: var(--ok-ink);
+  font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------------------
+   15. Footer
+   --------------------------------------------------------------------- */
+.site-footer {
+  margin-top: var(--space-section);
+  padding-block: var(--space-lg);
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.site-footer a { color: #bfe3dd; }
+.site-footer a:hover { color: var(--surface); }
+.site-footer address { font-style: normal; font-size: var(--text-small); }
+
+
+/* =====================================================================
+   MEDIA QUERY 1 of 3 — from 768px the navigation splits left/right
+   and the page gains a little more breathing room.
+   ===================================================================== */
+@media (min-width: 768px) {
+  .site-header__inner {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .js .nav-toggle { display: none; }
+
+  .site-menu,
+  .js .site-menu {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-xs);
+  }
+
+  .hero__content { max-width: 50ch; }
+  .site-footer__inner { flex-wrap: nowrap; }
+}
+
+
+/* =====================================================================
+   MEDIA QUERY 2 of 3 — at desktop the first destination becomes a
+   2x2 feature tile. Below this width it is an ordinary card.
+   ===================================================================== */
+@media (min-width: 1024px) {
+  .destination-grid--featured > :first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .destination-grid--featured > :first-child img {
+    aspect-ratio: 16 / 10;
+    height: 100%;
+  }
+}
+
+
+/* =====================================================================
+   MEDIA QUERY 3 of 3 — respect the operating-system motion setting.
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .skip-link,
+  .button,
+  .card,
+  .filter,
+  .js .nav-toggle,
+  .field input,
+  .field select,
+  .field textarea { transition-duration: 0.01ms; }
+
+  .card:hover,
+  .button:hover { transform: none; }
+}

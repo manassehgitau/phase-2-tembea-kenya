@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — Tembea</title>
+  <meta name="description" content="Send Tembea a trip inquiry: tell us where you want to go, when, and what kind of trip you are after.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container site-header__inner">
+
+      <a class="brand" href="index.html">Tembea</a>
+
+      <button class="nav-toggle" type="button"
+              aria-expanded="false" aria-controls="site-menu">
+        <span class="nav-toggle__icon" aria-hidden="true"></span>
+        Menu
+      </button>
+
+      <nav class="site-nav" aria-label="Main">
+        <ul class="site-menu" id="site-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="destinations.html">Destinations</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html" aria-current="page">Contact</a></li>
+        </ul>
+      </nav>
+
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+
+    <section class="section container">
+      <h1>Plan your trip</h1>
+      <p class="lead">
+        Tell us roughly what you have in mind and we will reply within two
+        working days. Nothing here is binding — most of our conversations start
+        with a half-formed idea.
+      </p>
+
+      <form class="form-card" action="#" method="post">
+
+        <div class="field">
+          <label for="name">Full name (required)</label>
+          <input type="text" id="name" name="name" autocomplete="name"
+                 required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address (required)</label>
+          <input type="email" id="email" name="email" autocomplete="email"
+                 required>
+        </div>
+
+        <div class="field">
+          <label for="destination">Which destination interests you most?</label>
+          <select id="destination" name="destination">
+            <option value="">Not sure yet</option>
+            <option value="maasai-mara">Maasai Mara</option>
+            <option value="amboseli">Amboseli</option>
+            <option value="lake-nakuru">Lake Nakuru</option>
+            <option value="lake-naivasha">Lake Naivasha</option>
+            <option value="mount-kenya">Mount Kenya</option>
+            <option value="diani-beach">Diani Beach</option>
+            <option value="lamu-old-town">Lamu Old Town</option>
+            <option value="watamu">Watamu</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="travel-date">Preferred travel date</label>
+          <input type="date" id="travel-date" name="travel-date">
+        </div>
+
+        <div class="field">
+          <fieldset>
+            <legend>Travel style</legend>
+            <p class="radio-row">
+              <input type="radio" id="style-budget" name="travel-style" value="budget">
+              <label for="style-budget">Budget</label>
+            </p>
+            <p class="radio-row">
+              <input type="radio" id="style-mid" name="travel-style" value="mid-range" checked>
+              <label for="style-mid">Mid-range</label>
+            </p>
+            <p class="radio-row">
+              <input type="radio" id="style-luxury" name="travel-style" value="luxury">
+              <label for="style-luxury">Luxury</label>
+            </p>
+          </fieldset>
+        </div>
+
+        <div class="field">
+          <label for="message">Tell us about your trip (required)</label>
+          <textarea id="message" name="message" rows="6"
+                    required></textarea>
+        </div>
+
+        <button class="button" type="submit">Send inquiry</button>
+
+      </form>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <p>&copy; 2026 Tembea Kenya. All rights reserved.</p>
+      <address>
+        Questions? Email
+        <a href="mailto:hello@tembea.co.ke">hello@tembea.co.ke</a>
+        or call <a href="tel:+254700000000">+254 700 000 000</a>.
+      </address>
+    </div>
+  </footer>
+
+</body>
+</html>
